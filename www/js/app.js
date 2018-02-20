@@ -472,7 +472,7 @@ angular.module('starter', ['ionic'])
                         $(".pipe").filter(function () { return $(this).position().left <= -100; }).remove()
 
                         //add a new pipe (top height + bottom height  + pipeheight == flyArea) and put it in our tracker
-                        var padding = 80;
+                        var padding = 100;
                         var constraint = flyArea - pipeheight - (padding * 2); //double padding (for top and bottom)
                         var topheight = Math.floor((Math.random() * constraint) + padding); //add lower padding
                         var bottomheight = (flyArea - pipeheight) - topheight;
