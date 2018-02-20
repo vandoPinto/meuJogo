@@ -200,7 +200,7 @@ angular.module('starter', ['ionic'])
                               gravity = 0;
                               jumping = 1;
                               position = posicaoInicial;
-                              console.log("no chao")
+                              //console.log("no chao")
                               //var playerbottom = $("#player").position().top + $("#player").width();
                               //console.log("Position " +(flyArea- $("#player").height()-5 ))
                               //playerDead();
@@ -210,7 +210,7 @@ angular.module('starter', ['ionic'])
                         //have they tried to escape through the ceiling? :o
                         var ceiling = $("#ceiling");
                         if (boxtop <= (ceiling.offset().top + ceiling.height())) {
-                              console.log("bateu no teto")
+                              //console.log("bateu no teto")
                               position = 0;
                         }
 
@@ -293,11 +293,11 @@ angular.module('starter', ['ionic'])
                   function playerJump() {
                         
                         if (jumping==2) {
-                              console.log("segundo pulo")
+                              //console.log("segundo pulo")
                               velocity = -5;
                               jumping++;
                         } else if(jumping == 1) {
-                              console.log("Primeiro pulo")
+                              //console.log("Primeiro pulo")
                               velocity = jump;
                               gravity = 0.25;
                               jumping++;
