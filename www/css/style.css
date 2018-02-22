@@ -50,22 +50,30 @@
     100% { background-position: -275px 100%; }
  }
  
+
+
+
  @-webkit-keyframes animBird {
     from { background-position: 0px 0px; }
-    to { background-position: 0px -96px; }
- }
+    to { background-position: -243px 0px; }
+ }/*
  @-moz-keyframes animBird {
     from { background-position: 0px 0px; }
-    to { background-position: 0px -96px; }
+    to { background-position: -135px 0px; }
  }
  @-o-keyframes animBird {
     from { background-position: 0px 0px; }
-    to { background-position: 0px -96px; }
+    to { background-position: -135px 0px; 0
  }
  @keyframes animBird {
     from { background-position: 0px 0px; }
-    to { background-position: 0px -96px; }
+    to { background-position: -135px 0px; }
  }
+
+*/
+
+
+
  
  @-webkit-keyframes animPipe {
     0% { left: 900px; }
@@ -86,19 +94,19 @@
  
  @-webkit-keyframes animCeiling {
     0% { background-position: 0px 0px; }
-    100% { background-position: -63px 0px; }
+    100% { background-position: 0px -63px; }
  }
  @-moz-keyframes animCeiling {
     0% { background-position: 0px 0px; }
-    100% { background-position: -63px 0px; }
+    100% { background-position: 0px -63px; }
  }
  @-o-keyframes animCeiling {
     0% { background-position: 0px 0px; }
-    100% { background-position: -63px 0px; }
+    100% { background-position: 0px -63px; }
  }
  @keyframes animCeiling {
     0% { background-position: 0px 0px; }
-    100% { background-position: -63px 0px; }
+    100% { background-position: 0px -63px; }
  }
  
  
@@ -128,16 +136,23 @@
     overflow: hidden;
     font-family: monospace;
     font-size: 12px;
-    color: #fff;
+    color: rgb(5, 4, 4);
+ }
+
+ #propaganda{
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: rgb(5, 4, 4);
  }
  
  #gamecontainer
  {
-    position: relative;
+    position: absolute;
     width: 100%;
-    height: 100%;
+    height: 80%;
     min-height: 525px;
- }
+ } 
  
  /*
  Screen - Game
@@ -147,6 +162,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    background-color: #4ec0ca;
  }
  
  #sky
@@ -160,8 +176,8 @@
     background-position: 0px 100%;
     background-color: #4ec0ca;
     
-   /*-webkit-animation: animSky 7s linear infinite;
-    animation: animSky 7s linear infinite;*/
+   -webkit-animation: animSky 7s linear infinite;
+    animation: animSky 7s linear infinite;
  }
  
  #flyarea
@@ -176,13 +192,12 @@
  {
     position: absolute;
     top: -16px;
-    height: 16px;
     width: 100%;
     background-image: url('../assets/ceiling.png');
     background-repeat: repeat-x;
     
-    /*-webkit-animation: animCeiling 481ms linear infinite;
-    animation: animCeiling 481ms linear infinite;*/
+    -webkit-animation: animCeiling 481ms linear infinite;
+    animation: animCeiling 481ms linear infinite;
  }
  
  #land
@@ -196,17 +211,29 @@
     background-position: 0px 0px;
     background-color: #ded895;
     
-    /*-webkit-animation: animLand 2516ms linear infinite;
-    animation: animLand 2516ms linear infinite;*/
+    -webkit-animation: animLand 2516ms linear infinite;
+    animation: animLand 2516ms linear infinite;
  }
  
  #bigscore
  {
     position: absolute;
-    top: 20px;
-    left: 50%;
-    z-index: 100;
+    top: 3px;
+    left: 1%;
+    /*z-index: 100;*/
  }
+
+ #playPause{
+    position: relative;
+    top: 3px;
+    right: -90%;
+ }
+ #botoes{
+    width: 100%;
+    height: 10%;
+    background-color: #4ec0ca;
+ }
+
  #starter{
     width: 100%;
     height: 100%;
@@ -217,13 +244,19 @@
     display: inline-block;
     padding: 1px;
  }
+
+ #playPause img
+ {
+    display: inline-block;
+    padding: 1px;
+ }
  
  #splash
  {
     position: absolute;
     opacity: 0;
-    top: 75px;
-    left: 35%;
+    top: 40%;
+    left: 45%;
     width: 188px;
     height: 170px;
     background-image: url('../assets/splash.png');
@@ -235,13 +268,12 @@
     position: absolute;
     display: none;
     opacity: 0;
-    top: 20%;
+    top: 30%;
     left: 35%;
     width: 236px;
     height: 280px;
     background-image: url('../assets/scoreboard.png');
-    background-repeat: no-repeat;
-    
+    background-repeat: no-repeat;    
     z-index: 1000;
  }
  
@@ -309,19 +341,19 @@
  
  #player
  {
-    left: 240px;
+    left: 30%;
     top: 0px;
  }
  
  .bird
  {
     position: absolute;
-    width: 34px;
-    height: 24px;
-    background-image: url('../assets/bird.png');
+    width: 37px;
+    height: 60px;
+    background-image: url('../assets/mario6.png');
     
-    -webkit-animation: animBird 300ms steps(4) infinite;
-    animation: animBird 300ms steps(4) infinite;
+    -webkit-animation: animBird 400ms steps(6) infinite;
+    animation: animBird 400ms steps(6) infinite;
  }
  
  .pipe
@@ -393,4 +425,8 @@
     padding: 2px;
     text-decoration: none;
     color: #fff;
+ }
+ 
+ #trace{
+     margin-top: 50px;
  }

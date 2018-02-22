@@ -9,6 +9,7 @@ angular.module('starter', ['ionic'])
             ionic.Platform.fullScreen();
             $ionicPlatform.ready(function () {
                   inicializacao();
+
                   if (window.cordova && window.cordova.plugins.Keyboard) {
                         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
                         // for form inputs)
@@ -26,15 +27,19 @@ angular.module('starter', ['ionic'])
             });
       })
 
+
+
 function inicializacao() {
-
+      var admobid = {};
       var debugmode = false;
-
       var states = Object.freeze({
             SplashScreen: 0,
             GameScreen: 1,
             ScoreScreen: 2
       });
+
+      var pause = false;
+      var contadorDeMorte = 0;
       var cont = 0;
       var cont2 = 0;
       var flag = true;
@@ -47,8 +52,32 @@ function inicializacao() {
 
       var rotation = 0;
       var jump = -10;
-      var flyArea = $("#flyarea").height();
-      var posicaoInicial = (flyArea - $("#player").height());
+
+      //variaveis de controle
+      var documento = $(document);
+      var player = $("#player");
+      //var pipe = $(".pipe");
+      var animated = $(".animated");
+      var splash = $("#splash");
+      var boundingbox = $(".boundingbox");
+      var playPause = $("#playPause");
+      var land = $("#land");
+      var sky = $("#sky");
+      var ceiling = $("#ceiling");
+      var replay = $("#replay");
+      var gamescreen = $("#gamescreen");
+      var flyareatag = $("#flyarea");
+      var flyArea = flyareatag.height();
+      var bigscore = $("#bigscore");
+      var currentscore = $("#currentscore");
+      var highscoretag = $("#highscore");
+      var medaltag = $("#medal");
+      var scoreboardtag = $("#scoreboard");
+      var propaganda = $("#propaganda");
+      var playerbox = $("#playerbox");
+      var pipebox = $("#pipebox");
+
+      var posicaoInicial = (flyArea - player.height());
       var position = posicaoInicial;
 
       var score = 0;
@@ -69,11 +98,13 @@ function inicializacao() {
       var soundSwoosh = new buzz.sound("assets/sounds/sfx_swooshing.ogg");
       buzz.all().setVolume(volume);
 
+
+
       //loops
       var loopGameloop;
       var loopPipeloop;
-      //alert("document ready 70")
-      $(document).ready(function () {
+
+      documento.ready(function () {
             if (window.location.search == "?debug")
                   debugmode = true;
             if (window.location.search == "?easy")
@@ -83,7 +114,6 @@ function inicializacao() {
             var savedscore = getCookie("highscore");
             if (savedscore != "")
                   highscore = parseInt(savedscore);
-            //alert("showSplash 81")
             //start with the splash screen
             showSplash();
       });
@@ -116,8 +146,8 @@ function inicializacao() {
             score = 0;
 
             //update the player in preparation for the next game
-            $("#player").css({ y: 0, x: 0 });
-            updatePlayer($("#player"));
+            player.css({ y: 0, x: 0 });
+            updatePlayer(player);
 
             soundSwoosh.stop();
             soundSwoosh.play();
@@ -131,23 +161,23 @@ function inicializacao() {
             $(".animated").css('-webkit-animation-play-state', 'running');
 
             //fade in the splash
-            $("#splash").transition({ opacity: 1 }, 2000, 'ease');
+            splash.transition({ opacity: 1 }, 2000, 'ease');
       }
 
       function startGame() {
             currentstate = states.GameScreen;
 
             //fade out the splash
-            $("#splash").stop();
-            $("#splash").transition({ opacity: 0 }, 500, 'ease');
+            splash.stop();
+            splash.transition({ opacity: 0 }, 500, 'ease');
 
             //update the big score
             setBigScore();
-
+            setPlayPause();
             //debug mode?
             if (debugmode) {
                   //show the bounding boxes
-                  $(".boundingbox").show();
+                  boundingbox.show();
             }
             updatePipes();
             enterFrame();
@@ -164,7 +194,7 @@ function inicializacao() {
 
             if (cont2 == parseInt(levelFase / 20)) {
                   //if (cont2 == (levelFase / 20)) {
-                  console.log(cont2 + " " + parseInt((levelFase) / 20));
+                  //console.log(cont2 + " " + parseInt((levelFase) / 20));
                   updatePipes();
                   cont2 = 0
             }
@@ -172,6 +202,36 @@ function inicializacao() {
                   requestAnimationFrame(enterFrame);
             }
       }
+
+      function setPlayPause(erase) {
+
+            playPause.empty();
+
+            if (erase)
+                  return;
+
+            playPause.append("<img src='assets/playPause.png'>");
+      }
+
+      playPause.click(function () {
+            //console.log(pause);
+            if (!pause) {
+                  $(".animated").css('animation-play-state', 'paused');
+                  $(".animated").css('-webkit-animation-play-state', 'paused');
+                  gamescreen.css("pointer-events", "none");
+                  flag = false;
+                  pause = true;
+            } else {
+                  $(".animated").css('animation-play-state', 'running');
+                  $(".animated").css('-webkit-animation-play-state', 'running');
+                  gamescreen.css("pointer-events", "auto");
+                  flag = true;
+                  pause = false;
+                  enterFrame();
+            }
+            //console.log(jumping);
+            //alert(jumping)
+      })
 
       function aumentarLevel() {
             levelFase -= 20;
@@ -188,7 +248,6 @@ function inicializacao() {
       }
 
       function gameloop() {
-            var player = $("#player");
 
             //update the player speed/position
             velocity += gravity;
@@ -211,7 +270,7 @@ function inicializacao() {
 
             //if we're in debug mode, draw the bounding box
             if (debugmode) {
-                  var boundingbox = $("#playerbox");
+                  var boundingbox = playerbox;
                   boundingbox.css('left', boxleft);
                   boundingbox.css('top', boxtop);
                   boundingbox.css('height', boxheight);
@@ -219,23 +278,21 @@ function inicializacao() {
             }
 
             //did we hit the ground?
-            var land = $("#land");
+
             var piso = (land.offset().top + land.height())
             if (box.bottom >= land.offset().top) {
                   if (jumping == 4) {
-                        $("#land").effect("shake");
+                        sky.effect("shake");
                   }
                   velocity = 0;
                   gravity = 0;
                   jumping = 1;
-                  //position = posicaoInicial;
-                  position = 100
-                  //playerDead();
-                  //return;
+                  position = posicaoInicial;
+                  //position = 100
             }
 
             //have they tried to escape through the ceiling? :o
-            var ceiling = $("#ceiling");
+
             if (boxtop <= (ceiling.offset().top + ceiling.height())) {
                   position = 0;
             }
@@ -254,7 +311,7 @@ function inicializacao() {
             var pipebottom = pipetop + pipeheight;
 
             if (debugmode) {
-                  var boundingbox = $("#pipebox");
+                  var boundingbox = pipebox;
                   boundingbox.css('left', pipeleft);
                   boundingbox.css('top', pipetop);
                   boundingbox.css('height', pipeheight);
@@ -291,7 +348,7 @@ function inicializacao() {
             if (e.keyCode == 32) {
                   //in ScoreScreen, hitting space should click the "replay" button. else it's just a regular spacebar hit
                   if (currentstate == states.ScoreScreen)
-                        $("#replay").click();
+                        replay.click();
                   else
                         screenClick();
             }
@@ -299,11 +356,12 @@ function inicializacao() {
 
       //Handle mouse down OR touch start
       if ("ontouchstart" in window) {
-            $(document).on("touchstart", screenClick);
+            gamescreen.on("touchstart", screenClick);
       } else {
-            $(document).on("mousedown", screenClick);
+            gamescreen.on("mousedown", screenClick);
       }
-      function screenClick() {
+
+      function screenClick(e) {
             if (currentstate == states.GameScreen) {
                   playerJump();
             }
@@ -315,23 +373,22 @@ function inicializacao() {
       function playerJump() {
             if (jumping == 3) {
                   gravity = 3;
-                  jumping++;
             } else if (jumping == 2) {
                   gravity = 0.25;
                   velocity = -5;
-                  jumping++;
             } else if (jumping == 1) {
                   gravity = 0.25;
                   velocity = jump;
-                  jumping++;
             }
+
+            jumping++;
             //play jump sound
             soundJump.stop();
             soundJump.play();
       }
 
       function setBigScore(erase) {
-            var elemscore = $("#bigscore");
+            var elemscore = bigscore;
             elemscore.empty();
 
             if (erase)
@@ -343,7 +400,7 @@ function inicializacao() {
       }
 
       function setSmallScore() {
-            var elemscore = $("#currentscore");
+            var elemscore = currentscore;
             elemscore.empty();
 
             var digits = score.toString().split('');
@@ -352,7 +409,7 @@ function inicializacao() {
       }
 
       function setHighScore() {
-            var elemscore = $("#highscore");
+            var elemscore = highscoretag;
             elemscore.empty();
 
             var digits = highscore.toString().split('');
@@ -361,7 +418,7 @@ function inicializacao() {
       }
 
       function setMedal() {
-            var elemmedal = $("#medal");
+            var elemmedal = medaltag;
             elemmedal.empty();
 
             if (score < 10)
@@ -387,14 +444,15 @@ function inicializacao() {
             flag = false;
             jumping = 1;
             //stop animating everything!
+            setPlayPause(true);
             $(".animated").css('animation-play-state', 'paused');
             $(".animated").css('-webkit-animation-play-state', 'paused');
 
             //drop the bird to the floor
-            var playerbottom = $("#player").position().top + $("#player").width(); //we use width because he'll be rotated 90 deg
+            var playerbottom = player.position().top + player.width(); //we use width because he'll be rotated 90 deg
             var floor = flyArea;
             var movey = Math.max(0, floor - playerbottom);
-            $("#player").transition({ y: movey + 'px', rotate: -90 }, 1000, 'easeInOutCubic');
+            player.transition({ y: movey + 'px', rotate: -90 }, 1000, 'easeInOutCubic');
 
             //it's time to change states. as of now we're considered ScoreScreen to disable left click/flying
             currentstate = states.ScoreScreen;
@@ -420,10 +478,11 @@ function inicializacao() {
 
       function showScore() {
             //unhide us
-            $("#scoreboard").css("display", "block");
+            scoreboardtag.css("display", "block");
 
             //remove the big score
             setBigScore(true);
+            setPlayPause(true);
 
             //have they beaten their high score?
             if (score > highscore) {
@@ -443,18 +502,18 @@ function inicializacao() {
             soundSwoosh.play();
 
             //show the scoreboard
-            $("#scoreboard").css({ y: '40px', opacity: 0 }); //move it down so we can slide it up
-            $("#replay").css({ y: '40px', opacity: 0 });
-            $("#scoreboard").transition({ y: '0px', opacity: 1 }, 600, 'ease', function () {
+            scoreboardtag.css({ y: '40px', opacity: 0 }); //move it down so we can slide it up
+            replay.css({ y: '40px', opacity: 0 });
+            scoreboardtag.transition({ y: '0px', opacity: 1 }, 600, 'ease', function () {
                   //When the animation is done, animate in the replay button and SWOOSH!
                   soundSwoosh.stop();
                   soundSwoosh.play();
-                  $("#replay").transition({ y: '0px', opacity: 1 }, 600, 'ease');
+                  replay.transition({ y: '0px', opacity: 1 }, 600, 'ease');
 
                   //also animate in the MEDAL! WOO!
                   if (wonmedal) {
-                        $("#medal").css({ scale: 2, opacity: 0 });
-                        $("#medal").transition({ opacity: 1, scale: 1 }, 1200, 'ease');
+                        medaltag.css({ scale: 2, opacity: 0 });
+                        medaltag.transition({ opacity: 1, scale: 1 }, 1200, 'ease');
                   }
             });
 
@@ -462,7 +521,7 @@ function inicializacao() {
             replayclickable = true;
       }
 
-      $("#replay").click(function () {
+      replay.click(function () {
             //make sure we can only click once
             if (!replayclickable)
                   return;
@@ -473,20 +532,32 @@ function inicializacao() {
             soundSwoosh.play();
 
             //fade out the scoreboard
-            $("#scoreboard").transition({ y: '-40px', opacity: 0 }, 1000, 'ease', function () {
+            scoreboardtag.transition({ y: '-40px', opacity: 0 }, 1000, 'ease', function () {
                   //when that's done, display us back to nothing
-                  $("#scoreboard").css("display", "none");
-
+                  scoreboardtag.css("display", "none");
+                  contadorDeMorte++;
                   //start the game over!
-                  showSplash();
+                  if (contadorDeMorte == 5) {
+                        if (ionic.Platform.isAndroid()) {
+                              mostrarInterstitial();
+                        }
+                        statusAD();
+                  } else {
+                        showSplash();
+                  }
             });
       });
+
+      function statusAD() {
+            showSplash();
+            contadorDeMorte = 0;
+      }
 
       function playerScore() {
             score += 1;
 
             if (score % 10 == 0) {
-                  console.log("aumentarLevel")
+                  //console.log("aumentarLevel")
                   if (score == 200) {
                         levelFase = 2000;
                   }
@@ -498,6 +569,12 @@ function inicializacao() {
                   }
                   aumentarLevel();
             }
+            if (score % 10 == 0) {
+                  if (score != 1) {
+                        mostrarBanner();
+                  }
+            }
+
             //play score sound
             soundScore.stop();
             soundScore.play();
@@ -514,7 +591,7 @@ function inicializacao() {
             var topheight = Math.floor((Math.random() * constraint) + padding); //add lower padding
             var bottomheight = (flyArea - pipeheight) - topheight;
             var newpipe = $('<div class="pipe animated"><div class="pipe_upper" style="height: ' + topheight + 'px;visibility:  hidden;"></div><div class="pipe_lower" style="height: ' + bottomheight + 'px;"></div></div>');
-            $("#flyarea").append(newpipe);
+            flyareatag.append(newpipe);
             pipes.push(newpipe);
       }
 
@@ -541,5 +618,57 @@ function inicializacao() {
                   return (isIncompatible.Android() || isIncompatible.BlackBerry() || isIncompatible.iOS() || isIncompatible.Opera() || isIncompatible.Safari() || isIncompatible.Windows());
             }
       }
-}
 
+      function initAd() {
+
+            if (!AdMob) { console.log('admob plugin not ready'); return; }
+            if (/(android)/i.test(navigator.userAgent)) { // for android & amazon-fireos
+                  admobid = {
+                        banner: 'ca-app-pub-6285246507445010/5877630332',
+                        interstitial: 'ca-app-pub-6285246507445010/7893419581'
+                        /*banner: 'ca-app-pub-6869992474017983/9375997553',
+                        interstitial: 'ca-app-pub-6869992474017983/1657046752'*/
+                  };
+            }
+            trace("finalizando a inicialização do admob")
+            if (AdMob) AdMob.prepareInterstitial({ adId: admobid.interstitial, autoShow: false });
+            mostrarBanner();
+      }
+
+      function mostrarBanner() {
+            trace("mostrar banner")
+            if (ionic.Platform.isAndroid()) {
+                  var largura = propaganda.width();
+                  var altura = propaganda.height();
+                  //alert(largura);
+                  if (AdMob) {
+                        AdMob.createBanner({
+                              adId: admobid.banner,
+                              adSize: 'CUSTOM', width: largura, height: altura,
+                              overlap: true,
+                              position: AdMob.AD_POSITION.POS_XY, x: 0, y: 0,
+                              isTesting: true,
+                              autoShow: true
+                        })
+                  }
+            }
+      }
+
+      function mostrarInterstitial() {
+            if (ionic.Platform.isAndroid()) {
+                  if (AdMob) AdMob.showInterstitial();
+                  trace("mostrandod interstricial")
+            }
+      }
+
+      if (ionic.Platform.isAndroid()) {
+            trace("iniciando admob")
+            initAd();
+      }else{
+            trace("não é ANDROID")
+      }
+
+      function trace(texto) {
+            $("#trace").html("" + texto);
+      }
+}
